@@ -19,7 +19,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/google/go-attestation/attest/internal"
+	"github.com/Fraunhofer-AISEC/go-attestation/attest/internal"
 	"github.com/google/certificate-transparency-go/x509"
 )
 
