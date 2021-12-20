@@ -142,14 +142,23 @@ func (t *wrappedTPM20) eks() ([]EK, error) {
 	if pub.RSAParameters == nil {
 		return nil, errors.New("ECC EK not yet supported")
 	}
-	return []EK{
-		{
-			Public: &rsa.PublicKey{
-				E: int(pub.RSAParameters.Exponent()),
-				N: pub.RSAParameters.Modulus(),
-			},
+
+	ek := EK{
+		Public: &rsa.PublicKey{
+			E: int(pub.RSAParameters.Exponent()),
+			N: pub.RSAParameters.Modulus(),
 		},
-	}, nil
+	}
+
+	i, err := t.info()
+	if err != nil {
+		return nil, err
+	}
+	if i.Manufacturer.String() == manufacturerIntel {
+		ek.CertificateURL = intelEKURL(ek.Public.(*rsa.PublicKey))
+	}
+
+	return []EK{ek}, nil
 }
 
 func (t *wrappedTPM20) newAK(opts *AKConfig) (*AK, error) {
